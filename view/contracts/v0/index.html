@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Cell</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Cell" />
+<meta name="twitter:description" content="Universal NFT Protocol" />
+<meta name="twitter:image" content="https://c0.cell.computer/c0.png" />
+<meta property="og:url" content="https://c0.cell.computer" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Cell" />
+<meta property="og:description" content="Universal NFT Protocol" />
+<meta property="og:image" content="https://c0.cell.computer/c0.png" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+<link href="/style.css" rel="stylesheet">
+<link href="../style.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.1/web3.min.js"></script>
+<script src="https://unpkg.com/c0js/dist/c0.js"></script>
+<script src="config.js"></script>
+<script src="../chains.js"></script>
+<script>
+let u;
+let chainIdPath;
+if (location.hash && location.hash.length > 0) {
+  u = location.hash.slice(1)
+  let chunks = u.split(".")
+  if (chunks > 0) {
+    chainIdPath = chunks[0]  
+  }
+}
+console.log("chainIdPath", chainIdPath)
+document.addEventListener("DOMContentLoaded", async () => {
+  const web3 = new Web3(window.ethereum);
+  try {
+    const chainId = await web3.eth.getChainId()
+    let network;
+    for(let chain of chains) {
+      if (parseInt(chain.chainId) === parseInt(chainIdPath)) {
+        network = chain.name
+      }
+    }
+    document.querySelector(".title").innerHTML = network
+    const factory = Config.factory
+    console.log("factory", factory)
+    const c0 = new C0()
+    await c0.init({ web3, chain: chainIdPath });
+    let implementation = await c0.collection.methods(factory).implementation().call()
+    console.log("IMPlementation", implementation)
+    let collections = await c0.collection.find({
+      factory,
+      implementation,
+      creator: c0.account,
+      start: 0,
+      count: 100
+    })
+    const header = `<div class='row top'><i class="fa-solid fa-folder-open"></i> / ${chainId} / ${c0.account}</div>`
+    document.querySelector(".container").innerHTML = header + collections.map((collection, i) => {
+      return `<a class='row indent' href="./contract#${chainIdPath}.${i}"><i class="fa-solid fa-folder-open"></i> ${collection} <div class='name'></div></a>`
+    }).join("")
+
+
+    for(let i=0; i<collections.length; i++) {
+      let collection = collections[i];
+      try {
+        let name = await c0.token.methods(collection).name().call()
+        document.querySelector(".row:nth-child(" + (i+2) + ") .name").innerHTML = "[" + name + "]"
+        document.querySelector(".row:nth-child(" + (i+2) + ")").classList.add("active")
+      } catch (e) {
+        console.log("break")
+        break;
+      }
+    }
+
+  } catch (e) {
+    document.querySelector(".container").innerHTML = `<div class='error'><h1>Error</h1>${e.message}</div>`
+  }
+})
+</script>
+</head>
+<body>
+<nav>
+  <div class='navbar'>
+    <a class='brand' href="/"><img class='mini' src="/nuron.png"> <span class='title'></span></a>
+  </div>
+</nav>
+<div class='container'></div>
+</body>
+</html>

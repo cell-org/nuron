@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="/navlinks.js"></script>
+<link href="/css/all.min.css" rel="stylesheet">
+<link href="/style.css" rel="stylesheet">
+</head>
+<body>
+<nav>
+<div class='navbar'>
+  <a class='brand' href="/"><img class='mini' src="/nuron.png"></a>
+  <div class='flexible'></div>
+  <div><%=name%></div>
+  <a href="/settings"><i class="fa-solid fa-gear"></i></a>
+</div>
+<div class='navlinks'></div>
+</nav>
+<main>
+<div class='list wallet'>
+<a class='item' href="/contracts"><i class="fa-solid fa-file-contract"></i> contracts</a>
+<a class='item' href="/wallets"><i class="fa-solid fa-key"></i> wallets</a>
+<a class='item' href="/workspaces"><i class="fa-solid fa-folder"></i> workspaces</a>
+<a class='item' href="/apps"><i class="fa-solid fa-gamepad"></i> apps</a>
+</div>
+</main>
+<script>
+const links = navlinks(location.pathname)
+document.querySelector(".navlinks").innerHTML = links
+</script>
+</body>
+</html>

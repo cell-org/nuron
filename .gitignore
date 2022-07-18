@@ -1,0 +1,6 @@
+.env
+node_modules
+package-lock.json
+__nuron__
+nuron.json
+.DS_Store

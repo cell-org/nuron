@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src="/nice-select2.js"></script>
+<script src="/privateparty.js"></script>
+<link href="/nice-select2.css" rel="stylesheet">
+<link href="/style.css" rel="stylesheet">
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  NiceSelect.bind(document.querySelector("select"))
+  document.querySelector("#wallets").addEventListener("change", (e) => {
+    document.querySelector("#username").value = e.target.value
+  })
+  document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    let password = document.querySelector("#password").value
+    let res = await fetch("/wallet/connect", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: document.querySelector("#wallets").value,
+        key: "m'/44'/60'/0'/0/0",
+        password
+      })
+    }).then((res) => {
+      return res.json()
+    }).then((r) => {
+      if (r.error) {
+        alert(r.error)
+        location.reload()
+      } else {
+        location.reload()
+      }
+    }).catch((e) => {
+      alert(e)
+      location.reload()
+    })
+  })
+  const party = new Privateparty()
+  document.querySelector("#logout").addEventListener("click", async (e) => {
+    await party.disconnect("admin")
+    location.href = location.href
+  })
+})
+</script>
+</head>
+<body class='center'>
+<main class='compact'>
+<div class='connector'>
+  <h5>connected as admin</h5>
+  <div>
+    <button id='logout'>Disconnect from admin</button>
+    <a class='btn' href="/privateparty/admin">Admin</a>
+  </div>
+</div>
+<h1 id='logo'><a href="/"><img class='logo' src="nuron.png"></a></h1>
+<br><br>
+<form>
+  <select name='wallets' id='wallets'>
+    <option value="" selected disabled hidden>select an account</option>
+    <%wallets.forEach((wallet) => {%>
+      <option value="<%=wallet%>"><%=wallet%></option>
+    <%})%>
+  </select>
+  <input id='username' type='username' placeholder='username' disabled class='hidden'>
+  <input id='password' type='password' placeholder='enter decryption password'>
+  <input type='submit' value='select'>
+  <br>
+  <a href="/wallet/generate">generate a wallet</a>
+  <a href="/wallet/import">import a wallet</a>
+</form>
+</main>
+</body>
+</html>

@@ -1,0 +1,258 @@
+@font-face {
+  font-family: 'visitor';
+  src:  url('visitor2-webfont.woff2') format('woff2'),
+        url('visitor2-webfont.woff') format('woff');
+}
+body {
+  margin: 0;
+  font-family: Sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgba(0,0,0,0.9);
+}
+.flexible {
+  flex-grow: 1;
+}
+nav .network {
+  font-family: Menlo, monaco, monospace;
+  font-size: 14px;
+  /*
+  font-size: 30px;
+  font-family: visitor;
+  */
+  color: white;
+  padding: 0 10px;
+  /*
+  display: block;
+  */
+  display: inline-block;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+#user {
+  border: 1px solid white;
+  height: 30px;
+  width: 30px;
+  border-radius: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.container {
+  display: block;
+}
+li {
+  margin: 15px 0;
+}
+b {
+  color: #6562a8;
+}
+h3 {
+  font-family: Menlo, monaco, monospace;
+}
+h1, h3 {
+  letter-spacing: -1px;
+  margin: 0 0 20px;
+}
+h1 {
+  font-size: 40px;
+  letter-spacing: 0px;
+  font-family: visitor;
+}
+.row {
+/*
+  color: rgba(0,0,0,0.7);
+  */
+  color: rgba(255,255,255,0.7);
+  display:flex;
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-family: Menlo, monaco, monospace;
+  letter-spacing: 0px;
+}
+.row.active {
+  color: yellowgreen;
+}
+.row i {
+  margin-right: 5px;
+}
+.row .name {
+  margin-left: 10px;
+}
+pre {
+  font-family: Menlo, monaco, monospace;
+  letter-spacing: 0px;
+  overflow-x: auto;
+}
+.row:nth-child(odd) {
+  background: rgba(57, 67, 183, 0.05);
+}
+header {
+  padding: 20px;
+  background: rgba(57, 67, 183, 0.05);
+}
+header h3 {
+  font-size: 15px;
+/*
+  color: rgba(0,0,0,0.7);
+  */
+  color: rgba(255,255,255,0.9);
+}
+.form {
+  padding: 50px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.1);
+}
+.form h1 {
+  margin: 0;
+}
+#info {
+  padding: 50px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.9);
+}
+.input-field {
+  display: block;
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  background: lavender;
+  margin: 0 0 10px;
+  border: none;
+}
+.loading {
+  padding: 10px 0;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+.loading img {
+  width: 20px;
+  vertical-align: middle;
+}
+.hidden {
+  display: none;
+}
+.rotate {
+  animation: rotation 2s infinite linear;
+}
+.btn {
+  padding: 5px 20px;
+  box-sizing: border-box;
+  margin: 5px 0 0;
+  background: yellowgreen;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+blockquote {
+  padding: 20px;
+  box-sizing: border-box;
+  /*
+  background: rgba(255,255,255,0.04);
+  */
+  background: rgba(154,205,50,0.04);
+  border-left: 2px solid yellowgreen;
+  margin: 10px 0;
+  font-size: 14px;
+}
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+.code {
+  border: 2px solid rgba(255,255,255,0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  background: rgba(57, 67, 183, 0.05);
+  font-family: Menlo, monaco, monospace;
+  font-size: 12px;
+}
+.code.h {
+  padding: 0;
+  border: none;
+}
+a {
+  color: cornflowerblue;
+  display: inline-block;
+}
+code {
+/*
+  background: rgba(57, 67, 183, 0.05);
+  background: rgba(255,255,255,0.1);
+  */
+  background: #22273b;
+  color: #6562a8;
+  padding: 1px 4px;
+  font-family: Menlo, monaco, monospace;
+  font-weight: bold;
+  font-size: 12px;
+}
+hr {
+  border: none;
+  background: rgba(57, 67, 183, 0.1);
+  height: 2px;
+  margin: 40px 0;
+}
+.section {
+/*
+  color: rgba(0,0,0,0.7);
+  */
+  color: white;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-left: 2px solid royalblue;
+  margin: 20px 0;
+}
+h4 {
+  margin: 0;
+  color: cornflowerblue;
+  font-size: 20px;
+  letter-spacing: -1px;
+}
+blockquote h4 {
+  color: yellow;
+}
+blockquote h2 {
+  font-size: 20px;
+  text-transform: uppercase;
+}
+main {
+  background: rgba(0,0,0,0.04);
+  padding: 10px;
+  box-sizing: border-box;
+}
+form {
+  margin: 0;
+}
+.explain {
+  font-size: 14px;
+  padding-bottom: 10px;
+}
+.indent {
+  padding-left: 30px;
+}
+.top {
+  font-weight: bold;
+}
+ol {
+  padding-inline-start: 20px;
+}
+.error {
+  padding: 100px;
+  text-align: center;
+  color: rgba(255,255,255,0.6);
+  font-weight: bold;
+}
+.error h1 {
+  color: white;
+}
+.l {
+  font-weight: bold;
+  color: yellowgreen;
+  text-transform: uppercase;
+}

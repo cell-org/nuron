@@ -1,0 +1,18 @@
+{
+  "name": "nuron",
+  "version": "0.2.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pm2": "npm install -g pm2",
+    "dev": "node start",
+    "prod": "pm2 start --name nuron start.js",
+    "start": "npm run pm2 && npm run prod"
+  },
+  "author": "@skogard",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "nurond": "^0.0.48"
+  }
+}

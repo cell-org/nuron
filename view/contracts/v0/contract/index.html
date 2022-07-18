@@ -1,0 +1,189 @@
+<html>
+<head>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/base16/rebecca.min.css" rel="stylesheet">
+<link href="/style.css" rel="stylesheet">
+<link href="../../style.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.1/web3.min.js"></script>
+<script src="https://unpkg.com/c0js/dist/c0.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+<script src="../config.js"></script>
+<script src="../../chains.js"></script>
+<script id="empty-template" type="text/x-handlebars-template">
+<div class='form'>
+<h1>Deploy Contract</h1>
+<div>
+  <div>Get started by deploying this contract.</div>
+  <br>
+  <form id='deploy'>
+    <input class='input-field' id='name' type='text' placeholder='name'>
+    <input class='input-field' id='symbol' type='text' placeholder='symbol'>
+    <input id='submit' type='submit' class='btn' value='deploy'>
+    <div class='loading hidden'>
+      <img class='rotate' src='../../cell_icon.png'> loading...
+    </div>
+  </form>
+</div>
+</div>
+</script>
+<script>
+let u;
+let chainIdPath;
+let index;
+const refresh = () => {
+  if (location.hash && location.hash.length > 0) {
+    u = location.hash.slice(1)
+    console.log("u", u)
+    let chunks = u.split(".")
+    console.log("chunks", chunks)
+    if (chunks.length === 2) {
+      chainIdPath = chunks[0]  
+      index = parseInt(chunks[1])
+    } else {
+      document.querySelector(".container").innerHTML = `<div class='error'><h1>Error</h1>Invalid path ${u}</div>`
+    }
+  }
+}
+console.log("chainIdPath", chainIdPath)
+const source1 = document.getElementById("empty-template").innerHTML;
+const empty_template = Handlebars.compile(source1);
+document.addEventListener("DOMContentLoaded", async () => {
+  refresh()
+  const web3 = new Web3(window.ethereum);
+  const chainId = await web3.eth.getChainId()
+  let network;
+  for(let chain of chains) {
+    if (parseInt(chain.chainId) === parseInt(chainIdPath)) {
+      network = chain.name
+    }
+  }
+  document.querySelector(".title").innerHTML = network
+  const factory = Config.factory
+  const c0 = new C0()
+  try {
+    await c0.init({ web3, chain: chainIdPath });
+  } catch (e) {
+    document.querySelector(".container").innerHTML = `<div class='error'><h1>Error</h1>${e.message}</div>`
+    return;
+  }
+  let implementation = await c0.collection.methods(factory).implementation().call()
+  const addresses = await c0.collection.find({
+    factory,
+    implementation,
+    creator: c0.account,
+    start: index,
+    count: 1
+  })
+  const address = addresses[0]
+  let domain = ""
+  let domainLine = ""
+  try {
+    const methods = c0.token.methods(address)
+    let name = await methods.name().call()
+    let symbol = await methods.symbol().call()
+    let chainId = await web3.eth.getChainId()
+    domain = JSON.stringify({
+      address,
+      chainId,
+      name
+    }, null, 2)
+    domainLine = JSON.stringify({
+      address,
+      chainId,
+      name
+    })
+    let url = Config.explorers[chainIdPath].replace("{address}", address)
+    document.querySelector("header").innerHTML = `<h3><i class="fa-solid fa-folder-open"></i> ${address}</h3>
+  <h4>${name} (${symbol})&nbsp;&nbsp;<a target="_blank" href="${url}"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></h4>
+<br>
+<div class='section'>
+<h4>domain</h4>
+<pre class='code'>${domain}</pre></div>`
+  } catch (e) {
+    let name = "(contract name)"
+    let symbol = "(contract symbol)"
+    let chainId = await web3.eth.getChainId()
+    domain = JSON.stringify({
+      address,
+      chainId,
+      name
+    }, null, 2)
+    domainLine = JSON.stringify({
+      address,
+      chainId,
+      name
+    })
+    console.log("domainLine", domainLine)
+    document.querySelector("header").innerHTML = `<h3><i class="fa-solid fa-folder-open"></i> ${address}</h3>${empty_template()}`
+    document.querySelector("form#deploy").addEventListener("submit", async (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      let name = document.querySelector("#name").value 
+      let symbol = document.querySelector("#symbol").value 
+      if (name.length === 0) {
+        alert("name must not be empty")
+        return
+      }
+      if (name.length === 0) {
+        alert("symbol must not be empty")
+        return
+      }
+      document.querySelector(".loading").classList.remove("hidden")
+      document.querySelector("#submit").classList.add("hidden")
+      let tx = await c0.collection.create({
+        factory,
+        index,
+        name,
+        symbol
+      })
+      console.log("tx", tx)
+      location.reload()
+    })
+  }
+//  let code = await fetch("/contracts/demo").then((r) => {
+//    return r.json()
+//  }).then((r) => {
+//    return r.code
+//  })
+//  code = code.replace("{{domain}}", domainLine)
+//  document.querySelector("#code code").innerHTML = code
+  hljs.highlightAll();
+})
+</script>
+</head>
+<body>
+<nav>
+  <div class='navbar'>
+    <a class='brand' href="/"><img class='mini' src="/nuron.png"> <span class='title'></span></a>
+  </div>
+</nav>
+<div class='container'>
+  <header></header>
+  <div id='info'>
+    <h1>Get Started</h1>
+    <blockquote>
+    <h2>Setup</h2>
+    <ol>
+      <li><div class='l'>Get nft.storage API key for IPFS</div><div>Nuronpress uses nft.storage to publish IPFS files</div><div><a class='btn' href="https://nft.storage">Go</a></div></li>
+      <li><div class='l'>Add the NFT.STORAGE API key to Nuron</div><div>The API key is necessary for publishing to IPFS</div><div><a class='btn' href="/settings/workspaces" target="_blank">Go</a></div></li>
+      <li><div class='l'>Add an access token to Nuronpress</div><div>You will need an access token to make authenticated requests to Nuronpress. Generate a random token that's hard to guess and add it to the admin page</div><div><a class='btn' href="/privateparty/admin">Go</a></div></li>
+    </ol>
+    </blockquote>
+    <blockquote>
+    <h2>Build</h2>
+    <ol>
+    <li>
+      <div class='l'>Learn how Cell works</div>
+      <div><a class='btn' target="_blank" href="https://intro.cell.computer">Go</a></div>
+    </li>
+    <li>
+      <div class='l'>Quickstart Tutorial</div>
+      <div class='l'><a class='btn' target="_blank" href="https://nuronpress.cell.computer/#/?id=quickstart">Go</a></div>
+    </li>
+    </ol>
+    </blockquote>
+  </div>
+</div>
+</body>
+</html>
