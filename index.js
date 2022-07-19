@@ -1,4 +1,4 @@
-const Nuron = require('nurond')
+const Nurond = require('nurond')
 const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
@@ -20,7 +20,7 @@ class Nuron {
     const nuronHome = path.resolve(this.root, "__nuron__/home")
     const nuronTmp = path.resolve(this.root, "__nuron__/tmp")
     const keyportHome = path.resolve(this.root, "__nuron__/keryport")
-    this.nuron = new Nuron();
+    this.nuron = new Nurond();
     await fs.promises.mkdir(nuronHome, { recursive: true }).catch((e) => {})
     await fs.promises.mkdir(nuronTmp, { recursive: true }).catch((e) => {})
     await this.nuron.init({
