@@ -1,7 +1,7 @@
 <html>
 <head>
 <script src="/nice-select2.js"></script>
-<script src="/privateparty.js"></script>
+<script src="https://unpkg.com/partyconnect/dist/partyconnect.js"></script>
 <link href="/nice-select2.css" rel="stylesheet">
 <link href="/style.css" rel="stylesheet">
 <script>
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   <h5>connected as admin</h5>
   <div>
     <button id='logout'>Disconnect from admin</button>
-    <a class='btn' href="/privateparty/admin">Admin</a>
+    <a class='btn' href="/nuron/admin">Admin</a>
   </div>
 </div>
 <h1 id='logo'><a href="/"><img class='logo' src="nuron.png"></a></h1>
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   <input id='password' type='password' placeholder='enter decryption password'>
   <input type='submit' value='select'>
   <br>
-  <a href="/wallet/generate">generate a wallet</a>
-  <a href="/wallet/import">import a wallet</a>
+  <a href="/wallets/generate">generate a wallet</a>
+  <a href="/wallets/import">import a wallet</a>
 </form>
 </main>
 </body>

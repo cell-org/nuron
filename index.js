@@ -30,8 +30,8 @@ class Nuron {
       keyport: keyportHome,
       admins: this.admins,
       secret: this.secret,
-      beforeAuth: (party) => {
-        let protector = {}
+      beforeInit: (party) => {
+        // admin should be able to access everything
         party.add("admin", {
           authorize: async (req, account) => {
             // only allow admins to use
@@ -47,26 +47,44 @@ class Nuron {
             }
           }
         })
-        protector.cookie = "admin"
+        party.add("api", {
+          authorize: async (req, account) => {
+            // only allow admins to use
+            if (this.admins && this.admins.length > 0) {
+              for(let admin of this.admins) {
+                console.log("account", account)
+                if (account === admin.toLowerCase()) {
+                  return { authorized: true }
+                }
+              }
+              throw new Error("not an admin account")
+            } else {
+              return { authorized: true }
+            }
+          }
+        })
+        party.app.use("/fs", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
+        party.app.use("/db", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
+        party.app.use("/raw", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
+        party.app.use("/token", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
+        party.app.use("/wallet", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
+        party.app.use("/web", party.protect(["api", "admin"], { json: { error: "unauthorized" } }))
 
-        // Token authentication
-        if (this.tokens) {
-          party.add("api", { tokens: this.tokens })
-          protector.token = "api"
-        }
-        return protector
-      },
-      afterAuth: (party) => {
-        party.app.post("/privateparty/admin/shutdown", party.protect("admin"), async (req, res) => {
+        party.app.use("/install", party.protect("admin"))
+        party.app.use("/apps", party.protect("admin"))
+        party.app.use("/settings", party.protect("admin"))
+        party.app.use("/wallets", party.protect("admin"))
+
+        party.app.post("/nuron/admin/shutdown", party.protect("admin"), async (req, res) => {
           res.json({})
           process.exit(1)
         })
-        party.app.post("/privateparty/admin/update", party.protect("admin"), async (req, res) => {
+        party.app.post("/nuron/admin/update", party.protect("admin"), async (req, res) => {
           console.log("update", req.body)
           await fs.promises.writeFile(this.configPath, JSON.stringify(req.body, null, 2))
           res.json({})
         })
-        party.app.get("/privateparty/admin", party.protect("admin"), async (req, res) => {
+        party.app.get("/nuron/admin", party.protect("admin"), async (req, res) => {
           let config = {}
           if (this.admins) config.admins = this.admins.join("\n")
           if (this.tokens) config.tokens = this.tokens.join("\n")
@@ -75,7 +93,8 @@ class Nuron {
           res.setHeader("Content-Type", "text/html").send(html)
         })        
         party.app.use("/contracts", party.express.static(path.join(__dirname, "view", "contracts")))
-        this.nuron.app.get("/", async (req, res) => {
+        party.app.get("/", party.protect("admin"), async (req, res) => {
+          console.log("GET /" )
           let key = this.nuron.core.wallet.key()
           if (key) {
             res.render(path.resolve(__dirname, "view", "home"), {

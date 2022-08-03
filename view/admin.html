@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://unpkg.com/privatepartyjs@0.0.37/dist/privateparty.js"></script>
+<script src="https://unpkg.com/partyconnect/dist/partyconnect.js"></script>
 <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <style>
 .hidden { display: none; }
@@ -128,7 +128,7 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   } else {
     encryptionKey = null
   }
-  let res = await fetch("/privateparty/admin/update", {
+  let res = await fetch("/nuron/admin/update", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -180,7 +180,7 @@ document.querySelector("#keyGen").addEventListener("click", (e) => {
   document.querySelector("#encryptionKey").value = u
 })
 document.querySelector("#shutdown").addEventListener("click", async (e) => {
-  let res = await fetch("/privateparty/admin/shutdown", {
+  let res = await fetch("/nuron/admin/shutdown", {
     method: "post",
   }).then((r) => {
     return r.json()
